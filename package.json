@@ -1,0 +1,14 @@
+{
+  "name": "euglena.organelle.net.nodejs",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/euglena.organelle.net.nodejs.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "codelovesme",
+  "license": "GPL v2",
+  "dependencies": {
+    "socket.io": "*"
+  }
+}
