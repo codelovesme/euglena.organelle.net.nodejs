@@ -9,7 +9,6 @@ import {euglena} from "euglena";
 import Particle = euglena.being.Particle;
 import * as io from "socket.io";
 import Exception = euglena.sys.type.Exception;
-import Response = euglena.being.interaction.Response;
 
 
 const OrganelleName = "ReceptionOrganelleImplHttp";
@@ -25,22 +24,22 @@ export class Organelle extends euglena_template.being.alive.organelles.Reception
         this.sockets = {};
         this.servers = {};
     }
-    public receive(particle:Particle,response:euglena.being.interaction.Response): void {
+    public receive(particle:Particle): void {
         switch (particle.name){
             case euglena_template.being.ghost.organelle.reception.constants.incomingparticles.Listen:
-                this.listen(response);
+                this.listen();
                 break;
             case euglena_template.being.ghost.organelle.reception.constants.incomingparticles.ThrowImpact:
                 let throwImpactContent = particle.content as euglena_template.being.ghost.organelle.reception.incomingparticles.ThrowImpactContent;
-                this.throwImpact(throwImpactContent.to, throwImpactContent.impact,response);
+                this.throwImpact(throwImpactContent.to, throwImpactContent.impact);
                 break;
             case euglena_template.being.ghost.organelle.impacttransmitter.constants.incomingparticles.ConnectToEuglena:
-                this.connectToEuglena(particle.content,response);
+                this.connectToEuglena(particle.content);
                 break;
         }
     }
     
-    private connectToEuglena(euglenaInfo: euglena_template.being.alive.particles.EuglenaInfo,response:euglena.being.interaction.Response) {
+    private connectToEuglena(euglenaInfo: euglena_template.being.alive.particles.EuglenaInfo) {
         if (this.servers[euglenaInfo.name]) {
             return;
         }
@@ -57,22 +56,22 @@ export class Organelle extends euglena_template.being.alive.organelles.Reception
         server.on("connect", (socket: SocketIO.Socket) => {
             server.emit("bind",this_.initialProperties.euglenaInfo,(done:boolean)=>{
                 if(done){
-                    this_.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ConnectedToEuglena(euglenaInfo,this_.name),response);
+                    this_.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ConnectedToEuglena(euglenaInfo,this_.name));
                 }
             });
             server.on("impact", (impactAssumption: any, callback: (impact:euglena.being.interaction.Impact) => void) => {
                 if (euglena.js.Class.instanceOf<euglena.being.interaction.Impact>(euglena_template.reference.being.interaction.Impact, impactAssumption)) {
-                    this.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ImpactReceived(impactAssumption,OrganelleName),response);
+                    this.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ImpactReceived(impactAssumption,OrganelleName));
                 } else {
                     //TODO
                 }
             });
         });
         server.on("disconnect", () => {
-            this_.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.DisconnectedFromEuglena(euglenaInfo,this_.name),response);
+            this_.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.DisconnectedFromEuglena(euglenaInfo,this_.name));
         });
     }
-    private listen(response:Response):void {
+    private listen():void {
         let server = http.createServer((req, res) => {
             if (req.method == 'POST') {
                 var body = '';
@@ -103,7 +102,7 @@ export class Organelle extends euglena_template.being.alive.organelles.Reception
                         impactAssumption = null;
                     }
                     if(impactAssumption){
-                        this.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ImpactReceived(impactAssumption as euglena.being.interaction.Impact,euglena_template.being.alive.constants.organelles.Net),response);
+                        this.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ImpactReceived(impactAssumption as euglena.being.interaction.Impact,euglena_template.being.alive.constants.organelles.Net));
                     }else{
                         //TODO
                     }
@@ -118,16 +117,16 @@ export class Organelle extends euglena_template.being.alive.organelles.Reception
         let socket = io.listen(server);
         server.listen(this.initialProperties.port);
         socket.on("connection", (socket:any) => {
-            socket.on("bind",(euglenaInfo:euglena_template.being.alive.particles.EuglenaInfo,callback:Response)=>{
+            socket.on("bind",(euglenaInfo:euglena_template.being.alive.particles.EuglenaInfo)=>{
                 this.sockets[euglenaInfo.name] = socket;
-                this_.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ConnectedToEuglena(euglenaInfo,this_.name),response);
+                this_.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ConnectedToEuglena(euglenaInfo,this_.name));
             });
             socket.on("impact", (impactAssumption:euglena.being.interaction.Impact) => {
-                this_.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ImpactReceived(impactAssumption as euglena.being.interaction.Impact,euglena_template.being.alive.constants.organelles.Net),response);
+                this_.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ImpactReceived(impactAssumption as euglena.being.interaction.Impact,euglena_template.being.alive.constants.organelles.Net));
             });
         });
     }
-    private throwImpact(to: euglena_template.being.alive.particles.EuglenaInfo, impact: euglena.being.interaction.Impact,response:Response): void {
+    private throwImpact(to: euglena_template.being.alive.particles.EuglenaInfo, impact: euglena.being.interaction.Impact): void {
         var client = this.sockets[to.name];
         if (client) {
             client.emit("impact", impact, (resp: euglena.being.interaction.Impact) => {
@@ -152,12 +151,12 @@ export class Organelle extends euglena_template.being.alive.organelles.Reception
                     }
                 };
                 let httpConnector = new HttpRequestManager(post_options);
-                httpConnector.sendMessage(JSON.stringify(impact), (message) => {
+                httpConnector.sendMessage(JSON.stringify(impact), (message:any) => {
                         if (euglena.sys.type.StaticTools.Exception.isNotException<string>(message)) {
                             try {
                                 let impactAssumption = JSON.parse(message); 
                                 if (euglena.js.Class.instanceOf(euglena_template.reference.being.interaction.Impact,impactAssumption)){
-                                    this_.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ImpactReceived(impactAssumption as euglena.being.interaction.Impact,OrganelleName),response);
+                                    this_.send(new euglena_template.being.ghost.organelle.reception.outgoingparticles.ImpactReceived(impactAssumption as euglena.being.interaction.Impact,OrganelleName));
                                 } else {
                                     //TODO log
                                 }
@@ -166,7 +165,7 @@ export class Organelle extends euglena_template.being.alive.organelles.Reception
                             }
                         } else {
                             //TODO write a eligable exception message
-                            this_.send(new euglena_template.being.alive.particles.Exception(new Exception(""),OrganelleName),response);
+                            this_.send(new euglena_template.being.alive.particles.Exception(new Exception(""),OrganelleName));
                         }
                     
                 });

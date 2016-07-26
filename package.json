@@ -10,6 +10,7 @@
   "license": "GPL v2",
   "dependencies": {
     "socket.io": "*",
+    "socket.io-client": "*",
     "euglena":"https://github.com/codelovesme/euglena.git#develop",
     "euglena.template": "https://github.com/codelovesme/euglena.template.git"
   }

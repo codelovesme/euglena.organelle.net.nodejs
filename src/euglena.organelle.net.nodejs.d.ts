@@ -9,10 +9,10 @@ export declare class Organelle extends euglena_template.being.alive.organelles.R
     private servers;
     private httpConnector;
     constructor();
-    receive(particle: Particle, response: euglena.being.interaction.Response): void;
-    private connectToEuglena(euglenaInfo, response);
-    private listen(response);
-    private throwImpact(to, impact, response);
+    receive(particle: Particle): void;
+    private connectToEuglena(euglenaInfo);
+    private listen();
+    private throwImpact(to, impact);
 }
 export declare class HttpRequestManager {
     post_options: http.RequestOptions;
