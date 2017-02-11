@@ -1,8 +1,4 @@
 .git/
 node_modules/
-bin/
-obj/
 .ntvs_analysis.dat
-*.js.map
-*.js
 
