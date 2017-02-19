@@ -112,6 +112,7 @@ class Organelle extends euglena_template_1.euglena_template.being.alive.organell
             socket.on("bind", (euglenaInfo) => {
                 this.sockets[euglenaInfo.data.name] = socket;
                 this_.send(new euglena_template_1.euglena_template.being.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name), this.name);
+                this_.send(euglenaInfo, this_.name);
             });
             socket.on("impact", (impactAssumption) => {
                 this_.send(new euglena_template_1.euglena_template.being.alive.particle.ImpactReceived(impactAssumption, euglena_template_1.euglena_template.being.alive.constants.organelles.NetOrganelle), this.name);
