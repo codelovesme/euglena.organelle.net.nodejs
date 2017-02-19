@@ -109,7 +109,8 @@ class Organelle extends euglena_template_1.euglena_template.being.alive.organell
         let socket = io.listen(server);
         server.listen(this.sapContent.euglenaInfo.data.port);
         socket.on("connection", (socket) => {
-            socket.on("bind", (euglenaInfo) => {
+            socket.on("bind", (euglenaInfo, callback) => {
+                callback(true);
                 this.sockets[euglenaInfo.data.name] = socket;
                 this_.send(new euglena_template_1.euglena_template.being.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name), this.name);
                 this_.send(euglenaInfo, this_.name);
