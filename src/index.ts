@@ -62,7 +62,8 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
                     this_.send(new euglena_template.being.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name), this.name);
                 }
             });
-            server.on("impact", (impactAssumption: any, callback: (impact: euglena.being.interaction.Impact) => void) => {
+            server.on("impact", (_impactAssumption: any, callback: (impact: euglena.being.interaction.Impact) => void) => {
+                let impactAssumption = euglena.js.Class.clone(_impactAssumption, true);
                 if (euglena.js.Class.instanceOf<euglena.being.interaction.Impact>(euglena_template.reference.being.interaction.Impact, impactAssumption)) {
                     this.send(new euglena_template.being.alive.particle.ImpactReceived(impactAssumption, OrganelleName), this.name);
                 } else {
@@ -120,14 +121,16 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
         let socket = io.listen(server);
         server.listen(this.sapContent.euglenaInfo.data.port);
         socket.on("connection", (socket: any) => {
-            socket.on("bind", (euglenaInfo: euglena_template.being.alive.particle.EuglenaInfo, callback:any) => {
+            socket.on("bind", (_euglenaInfo: euglena_template.being.alive.particle.EuglenaInfo, callback: any) => {
                 callback(true);
+                let euglenaInfo = euglena.js.Class.clone(_euglenaInfo, true);
                 this.sockets[euglenaInfo.data.name] = socket;
                 this_.send(new euglena_template.being.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name), this.name);
                 this_.send(euglenaInfo, this_.name);
             });
             socket.on("impact", (impactAssumption: euglena.being.interaction.Impact) => {
-                this_.send(new euglena_template.being.alive.particle.ImpactReceived(impactAssumption as euglena.being.interaction.Impact, euglena_template.being.alive.constants.organelles.NetOrganelle), this.name);
+                let copy = euglena.js.Class.clone(impactAssumption, true);
+                this_.send(new euglena_template.being.alive.particle.ImpactReceived(copy, euglena_template.being.alive.constants.organelles.NetOrganelle), this.name);
             });
         });
     }
