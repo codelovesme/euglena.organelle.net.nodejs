@@ -1,6 +1,7 @@
 /// <reference path="../typings/socket.io/socket.io.d.ts" />
 /// <reference path="../typings/node/node.d.ts" />
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const http = require("http");
 const euglena_template_1 = require("euglena.template");
 const euglena_1 = require("euglena");
@@ -52,11 +53,7 @@ class Organelle extends euglena_template_1.euglena_template.being.alive.organell
             });
             server.on("impact", (_impactAssumption, callback) => {
                 let impactAssumption = euglena_1.euglena.js.Class.clone(_impactAssumption, true);
-                if (euglena_1.euglena.js.Class.instanceOf(euglena_template_1.euglena_template.reference.being.interaction.Impact, impactAssumption)) {
-                    this.send(new euglena_template_1.euglena_template.being.alive.particle.ImpactReceived(impactAssumption, OrganelleName), this.name);
-                }
-                else {
-                }
+                this.send(impactAssumption, this.name);
             });
         });
         server.on("disconnect", () => {
@@ -79,15 +76,7 @@ class Organelle extends euglena_template_1.euglena_template.being.alive.organell
                     let result = { result: "Internal Server Error!" };
                     try {
                         impactAssumption = JSON.parse(body);
-                        if (euglena_1.euglena.js.Class.instanceOf(euglena_template_1.euglena_template.reference.being.interaction.Impact, impactAssumption) &&
-                            euglena_1.euglena.js.Class.instanceOf(euglena_template_1.euglena_template.reference.being.Particle, impactAssumption.particle)) {
-                            result = { result: "ok" };
-                        }
-                        else {
-                            //TODO
-                            result = { result: "Request format is uncorrect !" };
-                            impactAssumption = null;
-                        }
+                        result = { result: "ok" };
                     }
                     catch (e) {
                         //TODO
@@ -95,9 +84,10 @@ class Organelle extends euglena_template_1.euglena_template.being.alive.organell
                         impactAssumption = null;
                     }
                     if (impactAssumption) {
-                        this.send(new euglena_template_1.euglena_template.being.alive.particle.ImpactReceived(impactAssumption, euglena_template_1.euglena_template.being.alive.constants.organelles.NetOrganelle), this.name);
+                        this.send(impactAssumption, this.name);
                     }
                     else {
+                        //TODO
                     }
                     res.end(JSON.stringify(result));
                 });
@@ -119,7 +109,7 @@ class Organelle extends euglena_template_1.euglena_template.being.alive.organell
             });
             socket.on("impact", (impactAssumption) => {
                 let copy = euglena_1.euglena.js.Class.clone(impactAssumption, true);
-                this_.send(new euglena_template_1.euglena_template.being.alive.particle.ImpactReceived(copy, euglena_template_1.euglena_template.being.alive.constants.organelles.NetOrganelle), this.name);
+                this_.send(impactAssumption, this.name);
             });
         });
     }
@@ -154,13 +144,10 @@ class Organelle extends euglena_template_1.euglena_template.being.alive.organell
                     if (euglena_1.euglena.sys.type.StaticTools.Exception.isNotException(message)) {
                         try {
                             let impactAssumption = JSON.parse(message);
-                            if (euglena_1.euglena.js.Class.instanceOf(euglena_template_1.euglena_template.reference.being.interaction.Impact, impactAssumption)) {
-                                this_.send(new euglena_template_1.euglena_template.being.alive.particle.ImpactReceived(impactAssumption, OrganelleName), this.name);
-                            }
-                            else {
-                            }
+                            this_.send(impactAssumption, this.name);
                         }
                         catch (e) {
+                            //TODO
                         }
                     }
                     else {

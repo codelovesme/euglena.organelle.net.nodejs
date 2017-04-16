@@ -64,11 +64,7 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
             });
             server.on("impact", (_impactAssumption: any, callback: (impact: euglena.being.interaction.Impact) => void) => {
                 let impactAssumption = euglena.js.Class.clone(_impactAssumption, true);
-                if (euglena.js.Class.instanceOf<euglena.being.interaction.Impact>(euglena_template.reference.being.interaction.Impact, impactAssumption)) {
-                    this.send(new euglena_template.being.alive.particle.ImpactReceived(impactAssumption, OrganelleName), this.name);
-                } else {
-                    //TODO
-                }
+                this.send(impactAssumption, this.name);
             });
         });
         server.on("disconnect", () => {
@@ -91,22 +87,14 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
                     let result = { result: "Internal Server Error!" }
                     try {
                         impactAssumption = JSON.parse(body);
-                        if (euglena.js.Class.instanceOf<euglena.being.interaction.Impact>(euglena_template.reference.being.interaction.Impact, impactAssumption) &&
-                            euglena.js.Class.instanceOf<euglena.being.Particle>(euglena_template.reference.being.Particle, (impactAssumption as euglena.being.interaction.Impact).particle)) {
-                            result = { result: "ok" };
-
-                        } else {
-                            //TODO
-                            result = { result: "Request format is uncorrect !" };
-                            impactAssumption = null;
-                        }
+                        result = { result: "ok" };
                     } catch (e) {
                         //TODO
                         result = { result: "Request format is uncorrect !" };
                         impactAssumption = null;
                     }
                     if (impactAssumption) {
-                        this.send(new euglena_template.being.alive.particle.ImpactReceived(impactAssumption as euglena.being.interaction.Impact, euglena_template.being.alive.constants.organelles.NetOrganelle), this.name);
+                        this.send(impactAssumption, this.name);
                     } else {
                         //TODO
                     }
@@ -130,7 +118,7 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
             });
             socket.on("impact", (impactAssumption: euglena.being.interaction.Impact) => {
                 let copy = euglena.js.Class.clone(impactAssumption, true);
-                this_.send(new euglena_template.being.alive.particle.ImpactReceived(copy, euglena_template.being.alive.constants.organelles.NetOrganelle), this.name);
+                this_.send(impactAssumption, this.name);
             });
         });
     }
@@ -163,11 +151,7 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
                     if (euglena.sys.type.StaticTools.Exception.isNotException<string>(message)) {
                         try {
                             let impactAssumption = JSON.parse(message);
-                            if (euglena.js.Class.instanceOf(euglena_template.reference.being.interaction.Impact, impactAssumption)) {
-                                this_.send(new euglena_template.being.alive.particle.ImpactReceived(impactAssumption as euglena.being.interaction.Impact, OrganelleName), this.name);
-                            } else {
-                                //TODO log
-                            }
+                            this_.send(impactAssumption, this.name);
                         } catch (e) {
                             //TODO
                         }
