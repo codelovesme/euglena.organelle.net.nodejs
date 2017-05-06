@@ -1,5 +1,3 @@
-/// <reference path="../typings/socket.io/socket.io.d.ts" />
-/// <reference path="../typings/node/node.d.ts" />
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const http = require("http");

@@ -1,5 +1,4 @@
-/// <reference path="../typings/socket.io/socket.io.d.ts" />
-/// <reference path="../typings/node/node.d.ts" />
+/// <reference types="node" />
 import * as http from "http";
 import { euglena_template } from "euglena.template";
 import { euglena } from "euglena";
