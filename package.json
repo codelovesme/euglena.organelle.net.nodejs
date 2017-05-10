@@ -1,5 +1,5 @@
 {
-  "name": "@euglena/organelle.net.nodejs",
+  "name": "euglena.organelle.net.nodejs",
   "version": "0.0.3",
   "description": "",
   "main": "src/index.js",
