@@ -1,17 +1,18 @@
 
 "use strict";
 import * as http from "http";
-import { euglena_template } from "euglena.template";
-import { euglena } from "euglena";
-import Particle = euglena.being.Particle;
+import * as euglena_template from "@euglena/template";
+import * as euglena from "@euglena/core";
+import { sys, js } from "cessnalib";
+import Particle = euglena.ParticleV1;
 import * as io from "socket.io";
-import Exception = euglena.sys.type.Exception;
+import Exception = sys.type.Exception;
 
 
-const OrganelleName = euglena_template.being.alive.constants.organelles.NetOrganelle;
+const OrganelleName = euglena_template.alive.constants.organelles.NetOrganelle;
 
 let this_: Organelle = null;
-export class Organelle extends euglena_template.being.alive.organelle.NetOrganelle {
+export class Organelle extends euglena_template.alive.organelle.NetOrganelle {
     private sockets: any;
     private servers: any;
     private httpConnector: HttpRequestManager;
@@ -22,24 +23,24 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
         this.servers = {};
     }
 
-    private sapContent: euglena_template.being.alive.particle.NetOrganelleSapContent;
+    private sapContent: euglena_template.alive.particle.NetOrganelleSapContent;
     protected bindActions(addAction: (particleName: string, action: (particle: Particle, callback: (particle: Particle) => void) => void) => void): void {
-        addAction(euglena_template.being.alive.constants.particles.NetOrganelleSap, (particle) => {
+        addAction(euglena_template.alive.constants.particles.NetOrganelleSap, (particle) => {
             this.sapContent = particle.data;
         });
-        addAction(euglena_template.being.alive.constants.particles.Listen, particle => {
+        addAction(euglena_template.alive.constants.particles.Listen, particle => {
             this.listen();
         });
-        addAction(euglena_template.being.alive.constants.particles.ThrowImpact, particle => {
-            let throwImpactContent = particle.data as euglena_template.being.alive.particle.ThrowImpactContent;
+        addAction(euglena_template.alive.constants.particles.ThrowImpact, particle => {
+            let throwImpactContent = particle.data as euglena_template.alive.particle.ThrowImpactContent;
             this.throwImpact(throwImpactContent.to, throwImpactContent.impact);
         });
-        addAction(euglena_template.being.alive.constants.particles.ConnectToEuglena, particle => {
+        addAction(euglena_template.alive.constants.particles.ConnectToEuglena, particle => {
             this.connectToEuglena(particle.data);
         });
     }
 
-    private connectToEuglena(euglenaInfo: euglena_template.being.alive.particle.EuglenaInfo) {
+    private connectToEuglena(euglenaInfo: euglena_template.alive.particle.EuglenaInfo) {
         if (this.servers[euglenaInfo.data.name]) {
             return;
         }
@@ -56,16 +57,16 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
         server.on("connect", (socket: SocketIO.Socket) => {
             server.emit("bind", this_.sapContent.euglenaInfo, (done: boolean) => {
                 if (done) {
-                    this_.send(new euglena_template.being.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name), this.name);
+                    this_.send(new euglena_template.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name), this.name);
                 }
             });
-            server.on("impact", (_impactAssumption: any, callback: (impact: euglena.being.interaction.Impact) => void) => {
-                let impactAssumption = euglena.js.Class.clone(_impactAssumption, true);
+            server.on("impact", (_impactAssumption: any, callback: (impact: euglena.interaction.Impact) => void) => {
+                let impactAssumption = js.Class.clone(_impactAssumption, true);
                 this.send(impactAssumption, this.name);
             });
         });
         server.on("disconnect", () => {
-            this_.send(new euglena_template.being.alive.particle.DisconnectedFromEuglena(euglenaInfo, this_.name), this.name);
+            this_.send(new euglena_template.alive.particle.DisconnectedFromEuglena(euglenaInfo, this_.name), this.name);
         });
     }
     private listen(): void {
@@ -106,28 +107,28 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
         let socket = io.listen(server);
         server.listen(this.sapContent.euglenaInfo.data.port);
         socket.on("connection", (socket: any) => {
-            socket.on("bind", (_euglenaInfo: euglena_template.being.alive.particle.EuglenaInfo, callback: any) => {
+            socket.on("bind", (_euglenaInfo: euglena_template.alive.particle.EuglenaInfo, callback: any) => {
                 callback(true);
-                let euglenaInfo = euglena.js.Class.clone(_euglenaInfo, true);
+                let euglenaInfo = js.Class.clone(_euglenaInfo, true);
                 this.sockets[euglenaInfo.data.name] = socket;
-                this_.send(new euglena_template.being.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name), this.name);
+                this_.send(new euglena_template.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name), this.name);
                 this_.send(euglenaInfo, this_.name);
             });
-            socket.on("impact", (impactAssumption: euglena.being.interaction.Impact) => {
-                let copy = euglena.js.Class.clone(impactAssumption, true);
+            socket.on("impact", (impactAssumption: euglena.interaction.Impact) => {
+                let copy = js.Class.clone(impactAssumption, true);
                 this_.send(impactAssumption, this.name);
             });
         });
     }
-    private throwImpact(to: euglena_template.being.alive.particle.EuglenaInfo, impact: euglena.being.interaction.Impact): void {
+    private throwImpact(to: euglena_template.alive.particle.EuglenaInfo, impact: euglena.interaction.Impact): void {
         var client = this.sockets[to.data.name];
         if (client) {
-            client.emit("impact", impact, (resp: euglena.being.interaction.Impact) => {
+            client.emit("impact", impact, (resp: euglena.interaction.Impact) => {
                 //TODO
             });
         } else {
             //TODO
-            //response(new euglena_template.being.alive.particles.ExceptionOccurred(
+            //response(new euglena_template.alive.particles.ExceptionOccurred(
             //  new euglena.sys.type.Exception("There is no gateway connected with that id: " + userId)));
             let server = this.servers[to.data.name];
             if (server) {
@@ -145,7 +146,7 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
                 };
                 let httpConnector = new HttpRequestManager(post_options);
                 httpConnector.sendMessage(JSON.stringify(impact), (message: any) => {
-                    if (euglena.sys.type.StaticTools.Exception.isNotException<string>(message)) {
+                    if (sys.type.StaticTools.Exception.isNotException<string>(message)) {
                         try {
                             let impactAssumption = JSON.parse(message);
                             this_.send(impactAssumption, this.name);
@@ -154,7 +155,7 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
                         }
                     } else {
                         //TODO write a eligable exception message
-                        this_.send(new euglena_template.being.alive.particle.Exception(new Exception(""), OrganelleName), this.name);
+                        this_.send(new euglena_template.alive.particle.Exception(new Exception(""), OrganelleName), this.name);
                     }
 
                 });
@@ -165,7 +166,7 @@ export class Organelle extends euglena_template.being.alive.organelle.NetOrganel
 
 export class HttpRequestManager {
     constructor(public post_options: http.RequestOptions) { }
-    public sendMessage(message: string, callback: euglena.sys.type.Callback<string>): void {
+    public sendMessage(message: string, callback: sys.type.Callback<string>): void {
         var req = http.request(this.post_options, (res) => {
             res.setEncoding('utf8');
             var str = '';
