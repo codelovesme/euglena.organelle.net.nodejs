@@ -110,6 +110,7 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                 this_.send(impactAssumption, this.name);
             });
         });
+        this.send(new euglena_template.alive.particle.ServerRunning(this.sapContent.euglenaName), this.name);
     }
     throwImpact(to, impact) {
         var client = this.sockets[to.data.name];
