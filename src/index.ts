@@ -105,11 +105,16 @@ export class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                         impactAssumption = null;
                     }
                     if (impactAssumption) {
-                        this.send(impactAssumption, this.name);
+                        if (req.url === '/sync') {
+                            this.send(impactAssumption, this.name, (p) => res.end(p));
+                        } else {
+                            res.end(JSON.stringify(result));
+                            this.send(impactAssumption, this.name);
+                        }
                     } else {
-                        //TODO
+                        result = { result: "Request format is uncorrect !" };
+                        res.end(JSON.stringify(result));
                     }
-                    res.end(JSON.stringify(result));
                 });
             } else if (req.method == 'GET') {
                 res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -132,7 +137,7 @@ export class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                 this_.send(impactAssumption, this.name);
             });
         });
-        this.send(new euglena_template.alive.particle.ServerRunning(this.sapContent.euglenaInfo.data.port,this.sapContent.euglenaName),this.name);
+        this.send(new euglena_template.alive.particle.ServerRunning(this.sapContent.euglenaInfo.data.port, this.sapContent.euglenaName), this.name);
     }
     private throwImpact(to: euglena_template.alive.particle.EuglenaInfo, impact: euglena.interaction.Impact): void {
         var client = this.sockets[to.data.name];

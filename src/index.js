@@ -93,12 +93,18 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                         impactAssumption = null;
                     }
                     if (impactAssumption) {
-                        this.send(impactAssumption, this.name);
+                        if (req.url === '/sync') {
+                            this.send(impactAssumption, this.name, (p) => res.end(p));
+                        }
+                        else {
+                            res.end(JSON.stringify(result));
+                            this.send(impactAssumption, this.name);
+                        }
                     }
                     else {
-                        //TODO
+                        result = { result: "Request format is uncorrect !" };
+                        res.end(JSON.stringify(result));
                     }
-                    res.end(JSON.stringify(result));
                 });
             }
             else if (req.method == 'GET') {
