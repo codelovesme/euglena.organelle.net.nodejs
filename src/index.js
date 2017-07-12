@@ -94,7 +94,7 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                     }
                     if (impactAssumption) {
                         if (req.url === '/sync') {
-                            this.send(impactAssumption, this.name, (p) => res.end(p));
+                            this.send(impactAssumption, this.name, (p) => res.end(JSON.stringify(p)));
                         }
                         else {
                             res.end(JSON.stringify(result));
