@@ -57,16 +57,16 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
         server.on("connect", (socket) => {
             server.emit("bind", this_.sapContent.euglenaInfo, (done) => {
                 if (done) {
-                    this_.send(new euglena_template.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name), this.name);
+                    this_.send(new euglena_template.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name));
                 }
             });
             server.on("impact", (_impactAssumption, callback) => {
                 let impactAssumption = cessnalib_1.js.Class.clone(_impactAssumption, true);
-                this.send(impactAssumption, this.name);
+                this.send(impactAssumption);
             });
         });
         server.on("disconnect", () => {
-            this_.send(new euglena_template.alive.particle.DisconnectedFromEuglena(euglenaInfo, this_.name), this.name);
+            this_.send(new euglena_template.alive.particle.DisconnectedFromEuglena(euglenaInfo, this_.name));
         });
     }
     listen() {
@@ -94,11 +94,11 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                     }
                     if (impactAssumption) {
                         if (req.url === '/sync') {
-                            this.send(impactAssumption, this.name, (p) => res.end(JSON.stringify(p)));
+                            this.send(impactAssumption, (p) => res.end(JSON.stringify(p)));
                         }
                         else {
                             res.end(JSON.stringify(result));
-                            this.send(impactAssumption, this.name);
+                            this.send(impactAssumption);
                         }
                     }
                     else {
@@ -119,15 +119,15 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                 callback(true);
                 let euglenaInfo = cessnalib_1.js.Class.clone(_euglenaInfo, true);
                 this.sockets[euglenaInfo.data.name] = socket;
-                this_.send(new euglena_template.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name), this.name);
-                this_.send(euglenaInfo, this_.name);
+                this_.send(new euglena_template.alive.particle.ConnectedToEuglena(euglenaInfo, this_.name));
+                this_.send(euglenaInfo);
             });
             socket.on("impact", (impactAssumption) => {
                 let copy = cessnalib_1.js.Class.clone(impactAssumption, true);
-                this_.send(impactAssumption, this.name);
+                this_.send(impactAssumption);
             });
         });
-        this.send(new euglena_template.alive.particle.ServerRunning(this.sapContent.euglenaInfo.data.port, this.sapContent.euglenaName), this.name);
+        this.send(new euglena_template.alive.particle.ServerRunning(this.sapContent.euglenaInfo.data.port, this.sapContent.euglenaName));
     }
     throwImpact(to, impact) {
         var client = this.sockets[to.data.name];
@@ -160,7 +160,7 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                     if (cessnalib_1.sys.type.StaticTools.Exception.isNotException(message)) {
                         try {
                             let impactAssumption = JSON.parse(message);
-                            this_.send(impactAssumption, this.name);
+                            this_.send(impactAssumption);
                         }
                         catch (e) {
                             //TODO
@@ -168,7 +168,7 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                     }
                     else {
                         //TODO write a eligable exception message
-                        this_.send(new euglena_template.alive.particle.Exception(new Exception(""), OrganelleName), this.name);
+                        this_.send(new euglena_template.alive.particle.Exception(new Exception(""), OrganelleName));
                     }
                 });
             }
