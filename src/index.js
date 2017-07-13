@@ -108,8 +108,9 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                 });
             }
             else if (req.method == 'GET') {
+                let retrieveApi = new euglena_template.alive.particle.RetrieveApi(this.sapContent.euglenaName);
                 res.writeHead(200, { 'Content-Type': 'text/plain' });
-                res.end('Server is running...\n');
+                this.send(retrieveApi, (p) => res.end(JSON.stringify(p)));
             }
         });
         let socket = io.listen(server);
