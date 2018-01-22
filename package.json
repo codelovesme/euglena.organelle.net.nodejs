@@ -10,7 +10,7 @@
   "license": "GPL v2",
   "dependencies": {
     "@euglena/core": "git+https://github.com/codelovesme/euglena#a022c0c2ae1e42244bba1f37163f47116acdf56a",
-    "@euglena/template": "git+https://github.com/codelovesme/euglena.template#9e7b53d6277a4eac4aafb6b833e98abd65fe2642",
+    "@euglena/template": "^2.0.1",
     "socket.io": "^1.7.4",
     "socket.io-client": "^1.7.4"
   },
