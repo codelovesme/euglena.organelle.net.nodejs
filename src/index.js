@@ -16,11 +16,10 @@ const euglena_template = require("@euglena/template");
 const cessnalib_1 = require("cessnalib");
 const io = require("socket.io");
 var Exception = cessnalib_1.sys.type.Exception;
-const OrganelleName = euglena_template.alive.constants.organelles.NetOrganelle;
 let this_ = null;
 class Organelle extends euglena_template.alive.organelle.NetOrganelle {
     constructor() {
-        super(OrganelleName);
+        super();
         this_ = this;
         this.sockets = {};
         this.servers = {};
@@ -169,7 +168,7 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                     }
                     else {
                         //TODO write a eligable exception message
-                        this_.send(new euglena_template.alive.particle.Exception(new Exception(""), OrganelleName));
+                        this_.send(new euglena_template.alive.particle.Exception(new Exception(""), this.sapContent.euglenaName));
                     }
                 });
             }

@@ -9,8 +9,8 @@
   "author": "codelovesme",
   "license": "GPL v2",
   "dependencies": {
-    "@euglena/core": "git+https://github.com/codelovesme/euglena#a022c0c2ae1e42244bba1f37163f47116acdf56a",
-    "@euglena/template": "^2.0.1",
+    "@euglena/core": "^0.1.7",
+    "@euglena/template": "^2.0.2",
     "socket.io": "^1.7.4",
     "socket.io-client": "^1.7.4"
   },
