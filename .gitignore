@@ -1,4 +1,4 @@
-.git/
-node_modules/
+node_modules
 .ntvs_analysis.dat
-
+package-lock.json
+yarn.lock
