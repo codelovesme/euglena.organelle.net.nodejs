@@ -8,8 +8,14 @@
     "build": "gulp build",
     "start": "gulp watch"
   },
+  "files": [
+    ".dist/src/*"
+  ],
   "typings": ".dist/src/index.d.ts",
-  "author": "codelovesme",
+  "author": {
+    "name": "Fedai Kaya",
+    "email": "codelovesme@gmail.com"
+  },
   "license": "GPL v2",
   "dependencies": {
     "@euglena/core": "^0.1.7",
