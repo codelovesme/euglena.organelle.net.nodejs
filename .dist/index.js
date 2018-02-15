@@ -13,9 +13,26 @@ to next major version
 Object.defineProperty(exports, "__esModule", { value: true });
 const http = require("http");
 const euglena_template = require("@euglena/template");
+const euglena = require("@euglena/core");
 const cessnalib_1 = require("cessnalib");
 const io = require("socket.io");
 var Exception = cessnalib_1.sys.type.Exception;
+var particles;
+(function (particles) {
+    let incoming;
+    (function (incoming) {
+        class EnableUpload extends euglena_template.VoidParticle {
+            constructor(of) {
+                super(new euglena.MetaV2(EnableUpload.NAME, of));
+            }
+            c() {
+                particles.incoming.EnableUpload.NAME;
+            }
+        }
+        EnableUpload.NAME = "EnableUpload";
+        incoming.EnableUpload = EnableUpload;
+    })(incoming = particles.incoming || (particles.incoming = {}));
+})(particles = exports.particles || (exports.particles = {}));
 let this_ = null;
 class Organelle extends euglena_template.alive.organelle.NetOrganelle {
     constructor() {
@@ -204,4 +221,5 @@ class HttpRequestManager {
     }
 }
 exports.HttpRequestManager = HttpRequestManager;
+
 //# sourceMappingURL=index.js.map

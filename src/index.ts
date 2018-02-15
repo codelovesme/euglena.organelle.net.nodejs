@@ -21,6 +21,27 @@ import Particle = euglena.ParticleV1;
 import * as io from "socket.io";
 import Exception = sys.type.Exception;
 
+export namespace particles {
+    export namespace incoming {
+        export class EnableUpload extends euglena_template.VoidParticle {      
+            public static readonly NAME = "EnableUpload";      
+            constructor(of:string){
+                super(new euglena.MetaV2(EnableUpload.NAME,of));
+            }
+
+            c(){
+                particles.incoming.EnableUpload.NAME;
+            }
+        }
+    }
+    export namespace outgoing {
+
+    }
+    export namespace shared {
+
+    }
+}
+
 let this_: Organelle = null;
 export class Organelle extends euglena_template.alive.organelle.NetOrganelle {
     private sockets: any;
