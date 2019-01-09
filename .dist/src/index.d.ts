@@ -7,7 +7,7 @@ import Particle = euglena.ParticleV1;
 export declare namespace particles {
     namespace incoming {
         class EnableUpload extends euglena_template.VoidParticle {
-            static readonly NAME: string;
+            static readonly NAME = "EnableUpload";
             constructor(of: string);
             c(): void;
         }
@@ -24,9 +24,9 @@ export declare class Organelle extends euglena_template.alive.organelle.NetOrgan
     constructor();
     private sapContent;
     protected bindActions(addAction: (particleName: string, action: (particle: Particle, callback: (particle: Particle) => void) => void) => void): void;
-    private connectToEuglena(euglenaInfo);
-    private listen();
-    private throwImpact(to, impact);
+    private connectToEuglena;
+    private listen;
+    private throwImpact;
 }
 export declare class HttpRequestManager {
     post_options: http.RequestOptions;

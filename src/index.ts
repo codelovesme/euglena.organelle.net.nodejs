@@ -16,20 +16,20 @@ to next major version
 import * as http from "http";
 import * as euglena_template from "@euglena/template";
 import * as euglena from "@euglena/core";
-import { sys, js } from "cessnalib";
+import {sys, js} from "cessnalib";
 import Particle = euglena.ParticleV1;
 import * as io from "socket.io";
 import Exception = sys.type.Exception;
 
 export namespace particles {
     export namespace incoming {
-        export class EnableUpload extends euglena_template.VoidParticle {      
-            public static readonly NAME = "EnableUpload";      
-            constructor(of:string){
-                super(new euglena.MetaV2(EnableUpload.NAME,of));
+        export class EnableUpload extends euglena_template.VoidParticle {
+            public static readonly NAME = "EnableUpload";
+            constructor(of: string) {
+                super(new euglena.MetaV2(EnableUpload.NAME, of));
             }
 
-            c(){
+            c() {
                 particles.incoming.EnableUpload.NAME;
             }
         }
@@ -83,7 +83,9 @@ export class Organelle extends euglena_template.alive.organelle.NetOrganelle {
         post_options.headers = {
             'Content-Type': 'application/json'
         };
-        let server = io("http://" + post_options.host + ":" + post_options.port);
+        let server = io("http://" + post_options.host + ":" + post_options.port, {
+            transports: ['websocket']
+        });
         this.servers[euglenaInfo.data.name] = server;
         server.on("connect", (socket: SocketIO.Socket) => {
             server.emit("bind", this_.sapContent.euglenaInfo, (done: boolean) => {
@@ -111,15 +113,15 @@ export class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                         req.socket.destroy();
                 });
                 req.on('end', () => {
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.writeHead(200, {'Content-Type': 'application/json'});
                     let impactAssumption: any = null;
-                    let result = { result: "Internal Server Error!" }
+                    let result = {result: "Internal Server Error!"}
                     try {
                         impactAssumption = JSON.parse(body);
-                        result = { result: "ok" };
+                        result = {result: "ok"};
                     } catch (e) {
                         //TODO
-                        result = { result: "Request format is uncorrect !" };
+                        result = {result: "Request format is uncorrect !"};
                         impactAssumption = null;
                     }
                     if (impactAssumption) {
@@ -130,13 +132,13 @@ export class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                             this.send(impactAssumption);
                         }
                     } else {
-                        result = { result: "Request format is uncorrect !" };
+                        result = {result: "Request format is uncorrect !"};
                         res.end(JSON.stringify(result));
                     }
                 });
             } else if (req.method == 'GET') {
-                let retrieveApi = new euglena_template.alive.particle.ReadParticle({ meta: { name: euglena_template.alive.constants.particles.Api, of: this.sapContent.euglenaName } }, this.sapContent.euglenaName);
-                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                let retrieveApi = new euglena_template.alive.particle.ReadParticle({meta: {name: euglena_template.alive.constants.particles.Api, of: this.sapContent.euglenaName}}, this.sapContent.euglenaName);
+                res.writeHead(200, {'Content-Type': 'text/plain'});
                 this.send(retrieveApi, (p) => res.end(JSON.stringify(p)));
             }
 
@@ -193,7 +195,7 @@ export class Organelle extends euglena_template.alive.organelle.NetOrganelle {
                         }
                     } else {
                         //TODO write a eligable exception message
-                        this_.send(new euglena_template.alive.particle.Exception(new Exception(""),this.sapContent.euglenaName));
+                        this_.send(new euglena_template.alive.particle.Exception(new Exception(""), this.sapContent.euglenaName));
                     }
 
                 });
@@ -203,7 +205,7 @@ export class Organelle extends euglena_template.alive.organelle.NetOrganelle {
 }
 
 export class HttpRequestManager {
-    constructor(public post_options: http.RequestOptions) { }
+    constructor(public post_options: http.RequestOptions) {}
     public sendMessage(message: string, callback: sys.type.Callback<string>): void {
         var req = http.request(this.post_options, (res) => {
             res.setEncoding('utf8');

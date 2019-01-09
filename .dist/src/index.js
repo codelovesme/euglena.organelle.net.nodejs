@@ -68,7 +68,9 @@ class Organelle extends euglena_template.alive.organelle.NetOrganelle {
         post_options.headers = {
             'Content-Type': 'application/json'
         };
-        let server = io("http://" + post_options.host + ":" + post_options.port);
+        let server = io("http://" + post_options.host + ":" + post_options.port, {
+            transports: ['websocket']
+        });
         this.servers[euglenaInfo.data.name] = server;
         server.on("connect", (socket) => {
             server.emit("bind", this_.sapContent.euglenaInfo, (done) => {
@@ -221,5 +223,4 @@ class HttpRequestManager {
     }
 }
 exports.HttpRequestManager = HttpRequestManager;
-
 //# sourceMappingURL=index.js.map
